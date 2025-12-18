@@ -32,18 +32,6 @@ function buildCacheKey(params?: ChannelQueryParams) {
   return serialized ? `${CACHE_KEY}::${serialized}` : CACHE_KEY;
 }
 
-export async function getPromoCatChannel() {
-  const { data } = await httpClient.get<Channel>(`/channels/promo-cat/`);
-
-  return data;
-}
-
-export async function setPromoCatChannel(id: string) {
-  const { data } = await httpClient.post(`/channels/promo-cat/${id}`);
-
-  return data;
-}
-
 export async function fetchChannels(options?: {
   forceRefresh?: boolean;
   ttlMs?: number;

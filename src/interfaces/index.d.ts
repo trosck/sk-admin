@@ -42,9 +42,15 @@ export interface IScheduledPost {
 }
 
 export interface IPromoCat {
+  id: number;
   promocode: string;
   discount: number;
   date: string;
+}
+
+export interface IPromoCatSettings {
+  channel_id: string;
+  post_time: string;
 }
 
 export type Nullable<T> = {

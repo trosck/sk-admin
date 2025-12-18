@@ -2,9 +2,24 @@
   "uploadPromocodes": "Upload promocodes",
   "uploadImages": "Upload images",
   "promocat": {
+    "postTime": "Posting time",
     "promocode": "Promocode",
     "discount": "Discount",
-    "date": "Date"
+    "date": "Date",
+    "settings": {
+      "channel": {
+        "success": "Promocode channel updated",
+        "error": "Failed to update promocode channel"
+      },
+      "time": {
+        "success": "Posting time updated",
+        "error": "Failed to update posting time"
+      }
+    },
+    "upload": {
+      "success": "Promocode file uploaded successfully",
+      "error": "Failed to upload promocode file"
+    }
   },
   "scheduledPost": {
     "scheduledPosts": "Scheduled posts",

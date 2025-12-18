@@ -2,9 +2,24 @@
   "uploadPromocodes": "Upload promocodes",
   "uploadImages": "Upload images",
   "promocat": {
+    "postTime": "Время публикации",
     "promocode": "Promocode",
     "discount": "Discount",
-    "date": "Date"
+    "date": "Date",
+    "settings": {
+      "channel": {
+        "success": "Канал для промокодов обновлён",
+        "error": "Не удалось обновить канал для промокодов"
+      },
+      "time": {
+        "success": "Время постинга обновлено",
+        "error": "Не удалось обновить время постинга"
+      }
+    },
+    "upload": {
+      "success": "Файл промокодов успешно загружен",
+      "error": "Не удалось загрузить файл промокодов"
+    }
   },
   "scheduledPost": {
     "scheduledPosts": "Отложенные посты",
