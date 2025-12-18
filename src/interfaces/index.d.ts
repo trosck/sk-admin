@@ -41,6 +41,12 @@ export interface IScheduledPost {
   scheduled_at: Date;
 }
 
+export interface IPromoCat {
+  promocode: string;
+  discount: number;
+  date: string;
+}
+
 export type Nullable<T> = {
   [P in keyof T]: T[P] | null;
 };

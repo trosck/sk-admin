@@ -23,8 +23,10 @@ import { useChannels } from "../../api/channels";
 import { IScheduledPost } from "../../interfaces";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LinkIcon from "@mui/icons-material/Link";
 
 import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
 import { Mark } from "@tiptap/core";
 import {
   MenuButtonBold,
@@ -63,19 +65,19 @@ const Underline = Mark.create({
     return {
       setUnderline:
         () =>
-        ({ commands }: any) => {
-          return commands.setMark(this.name);
-        },
+          ({ commands }: any) => {
+            return commands.setMark(this.name);
+          },
       toggleUnderline:
         () =>
-        ({ commands }: any) => {
-          return commands.toggleMark(this.name);
-        },
+          ({ commands }: any) => {
+            return commands.toggleMark(this.name);
+          },
       unsetUnderline:
         () =>
-        ({ commands }: any) => {
-          return commands.unsetMark(this.name);
-        },
+          ({ commands }: any) => {
+            return commands.unsetMark(this.name);
+          },
     };
   },
   addKeyboardShortcuts() {
@@ -83,6 +85,12 @@ const Underline = Mark.create({
       "Mod-u": () => this.editor.commands.toggleUnderline(),
     };
   },
+});
+
+const linkExtension = Link.configure({
+  autolink: true,
+  linkOnPaste: true,
+  openOnClick: false,
 });
 
 interface FormValues {
@@ -267,6 +275,47 @@ export const ScheduledPostCreate: React.FC = () => {
 
   const rteRef = useRef<RichTextEditorRef>(null);
 
+  const handleInsertNamedLink = () => {
+    const editor = rteRef.current?.editor;
+    if (!editor) return;
+
+    const href = window.prompt("Введите URL ссылки", "https://");
+    if (!href) {
+      return;
+    }
+
+    const { state } = editor;
+    const { empty, from, to } = state.selection;
+
+    if (empty) {
+      const label =
+        window.prompt("Текст ссылки (по умолчанию URL)", href) ?? href;
+      if (!label) return;
+
+      // Вставляем готовый <a> и пробел после него — курсор окажется после пробела,
+      // и дальше будет вводиться обычный текст
+      editor
+        .chain()
+        .focus()
+        .insertContent(
+          `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a> `
+        )
+        .run();
+
+      return;
+    }
+
+    // Есть выделенный текст — делаем его ссылкой и добавляем пробел после,
+    // чтобы дальнейший ввод шел обычным текстом
+    editor
+      .chain()
+      .focus()
+      .setLink({ href })
+      .setTextSelection(to)
+      .insertContent(" ")
+      .run();
+  };
+
   return (
     <Drawer
       open
@@ -328,7 +377,11 @@ export const ScheduledPostCreate: React.FC = () => {
                 <div>
                   <RichTextEditor
                     ref={rteRef}
-                    extensions={[StarterKit, Underline]}
+                    extensions={[
+                      StarterKit,
+                      Underline,
+                      linkExtension,
+                    ]}
                     content={field.value || "<p></p>"}
                     onUpdate={({ editor }) => {
                       const html = editor.getHTML();
@@ -340,6 +393,14 @@ export const ScheduledPostCreate: React.FC = () => {
                         <MenuButtonItalic />
                         <MenuButtonUnderline />
                         <MenuButtonStrikethrough />
+                        <MenuDivider />
+                        <IconButton
+                          size="small"
+                          onClick={handleInsertNamedLink}
+                          sx={{ mr: 1 }}
+                        >
+                          <LinkIcon fontSize="small" />
+                        </IconButton>
                         <MenuDivider />
                         <MenuButtonCode />
                         <MenuButtonCodeBlock />

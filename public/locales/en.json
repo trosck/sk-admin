@@ -1,4 +1,11 @@
 {
+  "uploadPromocodes": "Upload promocodes",
+  "uploadImages": "Upload images",
+  "promocat": {
+    "promocode": "Promocode",
+    "discount": "Discount",
+    "date": "Date"
+  },
   "scheduledPost": {
     "scheduledPosts": "Scheduled posts",
     "createTitle": "Create scheduled post",
