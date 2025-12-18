@@ -1,0 +1,215 @@
+{
+  "pages": {
+    "login": {
+      "title": "Sign in to your account",
+      "signin": "Sign in",
+      "signup": "Sign up",
+      "divider": "or",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Login",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don’t have an account?",
+        "rememberMe": "Remember me"
+      }
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Send reset instructions"
+      }
+    },
+    "register": {
+      "title": "Sign up for your account",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Invalid email address"
+      },
+      "buttons": {
+        "submit": "Register",
+        "haveAccount": "Have an account?"
+      }
+    },
+    "updatePassword": {
+      "title": "Update password",
+      "fields": {
+        "password": "New Password",
+        "confirmPassword": "Confirm new password"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Passwords do not match"
+      },
+      "buttons": {
+        "submit": "Update"
+      }
+    },
+    "error": {
+      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "404": "Sorry, the page you visited does not exist.",
+      "resource404": "Are you sure you have created the {{resource}} resource.",
+      "backHome": "Back Home"
+    }
+  },
+  "actions": {
+    "list": "List",
+    "create": "Create",
+    "edit": "Edit",
+    "show": "Show",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "buttons": {
+    "add": "Add",
+    "create": "Create",
+    "save": "Save",
+    "logout": "Logout",
+    "delete": "Delete",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "confirm": "Are you sure?",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh",
+    "show": "Show",
+    "undo": "Undo",
+    "import": "Import",
+    "export": "Export",
+    "clone": "Clone",
+    "accept": "Accept",
+    "acceptAll": "Accept All",
+    "reject": "Reject",
+    "rejectAll": "Reject All",
+    "nextStep": "Next",
+    "previousStep": "Prev"
+  },
+  "loading": "Loading",
+  "tags": {
+    "clone": "Clone"
+  },
+  "table": {
+    "actions": "Actions",
+    "inTotal": "in total"
+  },
+  "search": {
+    "placeholder": "Search by Store ID, E-mail, Keyword",
+    "more": "more"
+  },
+  "status": {
+    "enable": "Enable",
+    "disable": "Disable"
+  },
+  "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
+  "notifications": {
+    "success": "Successful",
+    "error": "Error (status code: {{statusCode}})",
+    "undoable": "You have {{seconds}} seconds to undo",
+    "createSuccess": "Successfully created {{resource}}",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editSuccess": "Successfully edited {{resource}}",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "importProgress": "Importing: {{processed}}/{{total}}"
+  },
+  "enum": {
+    "orderStatuses": {
+      "Pending": "Pending",
+      "Ready": "Ready",
+      "On The Way": "On the way",
+      "Delivered": "Delivered",
+      "Cancelled": "Cancelled"
+    }
+  },
+  "users": {
+    "users": "Users",
+    "titles": {
+      "edit": "Edit User",
+      "list": "Users",
+      "show": "User Detail"
+    },
+    "fields": {
+      "id": "ID",
+      "avatar": {
+        "label": "Avatar",
+        "description": "Click or drag avatar image to this area to upload."
+      },
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "name": "Name",
+      "gender": {
+        "label": "Gender",
+        "Male": "Male",
+        "Female": "Female"
+      },
+      "gsm": "Gsm No",
+      "createdAt": "Created At",
+      "addresses": "Addresses",
+      "isActive": {
+        "label": "Status",
+        "true": "Active",
+        "false": "Idle"
+      }
+    },
+    "filter": {
+      "title": "Filters",
+      "id": {
+        "label": "ID",
+        "placeholder": "Search ID"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Search Name"
+      },
+      "gsm": {
+        "label": "Gsm",
+        "placeholder": "Search Gsm"
+      },
+      "search": {
+        "label": "Search",
+        "placeholder": "FirstName, lastName, gsm, etc."
+      },
+      "createdAt": {
+        "label": "Created At"
+      },
+      "gender": {
+        "label": "Gender",
+        "placeholder": "Gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "isActive": {
+        "label": "Active",
+        "placeholder": "Select Status",
+        "true": "Yes",
+        "false": "No"
+      },
+      "submit": "Filter"
+    },
+    "addresses": {
+      "addresses": "Addresses",
+      "address": "Address"
+    }
+  },
+  "errors": {
+    "minLength": "Minimum length is {{min}}",
+    "maxLength": "Maximum length is {{max}}",
+    "required": {
+      "field": "This field is required"
+    }
+  }
+}
