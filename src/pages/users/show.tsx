@@ -55,7 +55,7 @@ export const UserShow = () => {
     setLoading(true)
 
     if (user) {
-      await incrementUserXP(user?.user_id, +valueXP)
+      await incrementUserXP(user?.id, +valueXP)
       invalidate({ resource: "users", invalidates: ["all"] })
     }
 
@@ -87,7 +87,7 @@ export const UserShow = () => {
           />
           <Stack>
             <Typography color="text.secondary" fontWeight="700">
-              #{user?.discord_user_id}
+              #{user?.discord_id}
             </Typography>
             <Typography variant="h5">{user?.username}</Typography>
           </Stack>

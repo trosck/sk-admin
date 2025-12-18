@@ -86,7 +86,7 @@ export const UserList = ({ children }: PropsWithChildren) => {
               }}
               onClick={() => {
                 return go({
-                  to: `${showUrl("users", row.discord_user_id)}`,
+                  to: `${showUrl("users", row.discord_id)}`,
                   query: {
                     to: pathname,
                   },
@@ -112,7 +112,7 @@ export const UserList = ({ children }: PropsWithChildren) => {
         <DataGrid
           {...dataGridProps}
           columns={columns}
-          getRowId={row => row.user_id}
+          getRowId={row => row.id}
           pageSizeOptions={[10, 20, 50, 100]}
         />
       </RefineListView>

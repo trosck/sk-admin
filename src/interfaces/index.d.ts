@@ -1,6 +1,6 @@
 export interface IUser {
-  user_id: number;
-  discord_user_id: string;
+  id: number;
+  discord_id: string;
   username: string;
   roles: string[];
   total_xp: number;
