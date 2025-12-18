@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, type ReactNode } from "react";
 import {
-  useList,
   useTranslate,
   useGetIdentity,
   useGetLocale,
@@ -12,17 +11,13 @@ import {
 } from "@refinedev/mui";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
-import Autocomplete from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import SearchOutlined from "@mui/icons-material/SearchOutlined";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import i18n from "../../i18n";

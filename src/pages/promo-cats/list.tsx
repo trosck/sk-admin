@@ -1,4 +1,4 @@
-import { useMemo, type PropsWithChildren } from "react";
+import { useMemo, useRef, type PropsWithChildren, ChangeEvent } from "react";
 import {
   HttpError,
   useTranslate,
@@ -11,6 +11,23 @@ import { useDataGrid } from "@refinedev/mui";
 
 export const PromoCatList = ({ children }: PropsWithChildren) => {
   const t = useTranslate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleUploadPromocodesClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePromocodesFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+    // TODO: реализовать обработку файла промокодов (xlsx)
+    // Сейчас — заглушка
+    console.log("Selected promocodes file:", file);
+
+    // сброс значения, чтобы повторный выбор того же файла срабатывал
+    event.target.value = "";
+  };
 
   const columns = useMemo<GridColDef<IPromoCat>[]>(
     () => [
@@ -46,23 +63,35 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      <RefineListView breadcrumb={false} headerButtons={
-        <>
-          <Button variant="contained" onClick={() => {
-            return;
-          }}>
-            {t("uploadPromocodes")}
-          </Button>
+      <RefineListView
+        breadcrumb={false}
+        headerButtons={
+          <>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              style={{ display: "none" }}
+              onChange={handlePromocodesFileChange}
+            />
 
-          <Divider />
+            <Button variant="contained" onClick={handleUploadPromocodesClick}>
+              {t("uploadPromocodes")}
+            </Button>
 
-          <Button variant="contained" onClick={() => {
-            return;
-          }}>
-            {t("uploadImages")}
-          </Button>
-        </>
-      }>
+            <Divider />
+
+            <Button
+              variant="contained"
+              onClick={() => {
+                return;
+              }}
+            >
+              {t("uploadImages")}
+            </Button>
+          </>
+        }
+      >
         <DataGrid
           {...dataGridProps}
           columns={columns}
