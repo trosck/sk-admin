@@ -1,46 +1,15 @@
 import type { AuthProvider } from "@refinedev/core";
-import { disableAutoLogin, enableAutoLogin } from "./hooks";
 
 export const TOKEN_KEY = "refine-auth";
 
 export const authProvider: AuthProvider = {
-  login: async ({ email, password }) => {
-    enableAutoLogin();
-    localStorage.setItem(TOKEN_KEY, `${email}-${password}`);
+  login: async ({ password }) => {
     return {
       success: true,
       redirectTo: "/",
     };
   },
-  register: async ({ email, password }) => {
-    try {
-      await authProvider.login({ email, password });
-      return {
-        success: true,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          message: "Register failed",
-          name: "Invalid email or password",
-        },
-      };
-    }
-  },
-  updatePassword: async (params) => {
-    return {
-      success: true,
-    };
-  },
-  forgotPassword: async () => {
-    return {
-      success: true,
-    };
-  },
   logout: async () => {
-    disableAutoLogin();
-    localStorage.removeItem(TOKEN_KEY);
     return {
       success: true,
       redirectTo: "/login",
@@ -73,17 +42,11 @@ export const authProvider: AuthProvider = {
       redirectTo: "/login",
     };
   },
-  getPermissions: async () => null,
   getIdentity: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      return null;
-    }
-
     return {
-      id: 1,
-      name: "James Sullivan",
-      avatar: "https://i.pravatar.cc/150",
+      name: "Admin",
+      avatar:
+        "https://i.pinimg.com/200x/ba/45/a7/ba45a7114bdc22df8f756868b69789fb.jpg",
     };
   },
 };

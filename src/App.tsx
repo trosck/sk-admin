@@ -31,12 +31,12 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 
 import { authProvider } from "./authProvider";
 import { DashboardPage } from "./pages/dashboard";
-import { AuthPage } from "./pages/auth";
 import { ColorModeContextProvider } from "./contexts";
 import { Header, Title } from "./components";
 import { useAutoLoginForDemo } from "./hooks";
 import { dataProvider } from "./dataProvider";
 import { UserShow } from "./pages/users/show";
+import { PasswordOnlyLogin } from "./pages/auth";
 
 const UserList = lazy(() => import("./pages/users/list"));
 const PromoCatList = lazy(() => import("./pages/promo-cats/list"));
@@ -47,20 +47,12 @@ const ScheduledPostCreate = lazy(
 );
 
 const App: React.FC = () => {
-  // This hook is used to automatically login the user.
-  // We use this hook to skip the login page and demonstrate the application more quickly.
-  const { loading } = useAutoLoginForDemo();
-
   const { t, i18n } = useTranslation();
   const i18nProvider = {
     translate: (key: string, params: object) => t(key, params),
     changeLocale: (lang: string) => i18n.changeLanguage(lang),
     getLocale: () => i18n.language,
   };
-
-  if (loading) {
-    return null;
-  }
 
   return (
     <BrowserRouter>
@@ -191,51 +183,7 @@ const App: React.FC = () => {
                     </Authenticated>
                   }
                 >
-                  <Route
-                    path="/login"
-                    element={
-                      <AuthPage
-                        type="login"
-                        formProps={{
-                          defaultValues: {
-                            email: "demo@refine.dev",
-                            password: "demodemo",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      <AuthPage
-                        type="register"
-                        formProps={{
-                          defaultValues: {
-                            email: "demo@refine.dev",
-                            password: "demodemo",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/forgot-password"
-                    element={
-                      <AuthPage
-                        type="forgotPassword"
-                        formProps={{
-                          defaultValues: {
-                            email: "demo@refine.dev",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/update-password"
-                    element={<AuthPage type="updatePassword" />}
-                  />
+                  <Route path="/login" element={<PasswordOnlyLogin />} />
                 </Route>
 
                 <Route

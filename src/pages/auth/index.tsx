@@ -1,23 +1,38 @@
 import * as React from "react";
-import { AuthPage as MUIAuthPage, type AuthProps } from "@refinedev/mui";
-import { Link } from "react-router";
-import Box from "@mui/material/Box";
+import { useState } from "react";
 
-const renderAuthContent = (content: React.ReactNode) => {
-  return (
-    <div>
-      <Link to="/"></Link>
-      {content}
-    </div>
-  );
-};
+import { useLogin, useTranslate } from "@refinedev/core";
+import { TextField, Button, Card, CardContent } from "@mui/material";
 
-export const AuthPage: React.FC<AuthProps> = ({ type, formProps }) => {
+export const PasswordOnlyLogin = () => {
+  const t = useTranslate();
+  const { mutate: login } = useLogin();
+  const [password, setPassword] = useState("");
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // передаём только password в authProvider.login
+    login({ password });
+  };
+
   return (
-    <MUIAuthPage
-      type={type}
-      renderContent={renderAuthContent}
-      formProps={formProps}
-    />
+    <Card sx={{ maxWidth: 400, m: "auto", mt: 8 }}>
+      <CardContent>
+        <form onSubmit={onSubmit}>
+          <TextField
+            fullWidth
+            type="password"
+            label={t("pages.login.fields.password")}
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 }}>
+            {t("pages.login.signin")}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
