@@ -100,6 +100,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         field: "date",
         headerName: t("promocat.date"),
         flex: 1,
+        sortingOrder: ["desc", "asc"],
         renderCell: function render({ row }) {
           if (!row.date) return "";
           const date = new Date(row.date);
@@ -164,6 +165,9 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         message: t("promocat.upload.success"),
         description: file.name,
       });
+
+      // Обновляем данные таблицы после успешной загрузки
+      await tableQuery.refetch();
     } catch (error) {
       console.error("Failed to upload promocodes file", error);
 
@@ -176,7 +180,9 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
     event.target.value = "";
   };
 
-  const handleImagesFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImagesFileChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
 
     if (!file) return;
@@ -346,10 +352,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
 
             <Divider />
 
-            <Button
-              variant="contained"
-              onClick={handleUploadImagesClick}
-            >
+            <Button variant="contained" onClick={handleUploadImagesClick}>
               {t("uploadImages")}
             </Button>
           </>
