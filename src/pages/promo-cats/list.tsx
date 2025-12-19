@@ -12,13 +12,23 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   IFilterVariables,
   IPromoCat,
+  IPromoCatImage,
   IPromoCatSettings,
 } from "../../interfaces";
-import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useDataGrid } from "@refinedev/mui";
 import {
   httpClient,
   getPromoCatsSettings,
+  getPromoCatsImages,
   setPromoCatsSettings,
 } from "../../api";
 import { useChannels, type Channel } from "../../api/channels";
@@ -30,6 +40,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imagesFileInputRef = useRef<HTMLInputElement | null>(null);
   const [settings, setSettings] = useState<IPromoCatSettings | null>(null);
+  const [images, setImages] = useState<IPromoCatImage[]>([]);
 
   const { data: channelsData } = useChannels();
 
@@ -46,6 +57,17 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         setSettings(data);
       } catch (error) {
         console.error("Failed to load promo cats settings", error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const data = await getPromoCatsImages();
+        setImages(data);
+      } catch (error) {
+        console.error("Failed to load promo cats images", error);
       }
     })();
   }, []);
@@ -174,6 +196,13 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         message: t("promocat.upload.success"),
         description: file.name,
       });
+
+      try {
+        const newImages = await getPromoCatsImages();
+        setImages(newImages);
+      } catch (error) {
+        console.error("Failed to reload promo cats images after upload", error);
+      }
     } catch (error) {
       console.error("Failed to upload images archive", error);
 
@@ -332,6 +361,50 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
           getRowId={(row) => row.id}
           pageSizeOptions={[10, 20, 50, 100]}
         />
+        {images.length > 0 && (
+          <Box mt={2}>
+            <Typography variant="subtitle1" gutterBottom>
+              {t("promocat.imagesPreview")}
+            </Typography>
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              {images.map((image) => (
+                <Box
+                  key={image.name}
+                  sx={{
+                    width: 120,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={`data:image/*;base64,${image.preview}`}
+                    alt={image.name}
+                    sx={{
+                      width: "100%",
+                      height: 80,
+                      objectFit: "cover",
+                      borderRadius: 1,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      mb: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    noWrap
+                    sx={{ width: "100%", textAlign: "center" }}
+                    title={image.name}
+                  >
+                    {image.name}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+        )}
       </RefineListView>
       {children}
     </>

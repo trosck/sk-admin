@@ -19,7 +19,8 @@
     "upload": {
       "success": "Promocode file uploaded successfully",
       "error": "Failed to upload promocode file"
-    }
+    },
+    "imagesPreview": "Images Preview"
   },
   "scheduledPost": {
     "scheduledPosts": "Scheduled posts",

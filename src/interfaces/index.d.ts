@@ -48,6 +48,11 @@ export interface IPromoCat {
   date: string;
 }
 
+export interface IPromoCatImage {
+  name: string;
+  preview: string; // base64
+}
+
 export interface IPromoCatSettings {
   channel_id: string;
   post_time: string;
