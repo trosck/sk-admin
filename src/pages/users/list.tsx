@@ -21,15 +21,13 @@ export const UserList = ({ children }: PropsWithChildren) => {
   const { showUrl } = useNavigation();
   const t = useTranslate();
 
-  const { dataGridProps } = useDataGrid<
-    IUser,
-    HttpError,
-    IUserFilterVariables
-  >({
-    pagination: {
-      pageSize: 10,
-    },
-  });
+  const { dataGridProps } = useDataGrid<IUser, HttpError, IUserFilterVariables>(
+    {
+      pagination: {
+        pageSize: 10,
+      },
+    }
+  );
 
   const columns = useMemo<GridColDef<IUser>[]>(
     () => [
@@ -56,7 +54,7 @@ export const UserList = ({ children }: PropsWithChildren) => {
         field: "username",
         headerName: t("users.fields.name"),
         minWidth: 140,
-        flex: 1
+        flex: 1,
       },
       {
         field: "total_xp",
@@ -103,7 +101,7 @@ export const UserList = ({ children }: PropsWithChildren) => {
         },
       },
     ],
-    [t, go, pathname, showUrl],
+    [t, go, pathname, showUrl]
   );
 
   return (
@@ -112,7 +110,7 @@ export const UserList = ({ children }: PropsWithChildren) => {
         <DataGrid
           {...dataGridProps}
           columns={columns}
-          getRowId={row => row.id}
+          getRowId={(row) => row.id}
           pageSizeOptions={[10, 20, 50, 100]}
         />
       </RefineListView>
@@ -120,3 +118,5 @@ export const UserList = ({ children }: PropsWithChildren) => {
     </>
   );
 };
+
+export default UserList;

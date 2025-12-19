@@ -517,3 +517,5 @@ export const ScheduledPostCreate: React.FC = () => {
     </Drawer>
   );
 };
+
+export default ScheduledPostCreate

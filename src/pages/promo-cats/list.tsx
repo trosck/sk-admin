@@ -6,17 +6,21 @@ import {
   type PropsWithChildren,
   type ChangeEvent,
 } from "react";
-import {
-  HttpError,
-  useTranslate,
-  useNotification,
-} from "@refinedev/core";
+import { HttpError, useTranslate, useNotification } from "@refinedev/core";
 import { RefineListView } from "../../components";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { IFilterVariables, IPromoCat, IPromoCatSettings } from "../../interfaces";
+import {
+  IFilterVariables,
+  IPromoCat,
+  IPromoCatSettings,
+} from "../../interfaces";
 import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { useDataGrid } from "@refinedev/mui";
-import { httpClient, getPromoCatsSettings, setPromoCatsSettings } from "../../api";
+import {
+  httpClient,
+  getPromoCatsSettings,
+  setPromoCatsSettings,
+} from "../../api";
 import { useChannels, type Channel } from "../../api/channels";
 import Autocomplete from "@mui/material/Autocomplete";
 
@@ -24,6 +28,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
   const t = useTranslate();
   const { open: openNotification } = useNotification();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const imagesFileInputRef = useRef<HTMLInputElement | null>(null);
   const [settings, setSettings] = useState<IPromoCatSettings | null>(null);
 
   const { data: channelsData } = useChannels();
@@ -49,6 +54,10 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
     fileInputRef.current?.click();
   };
 
+  const handleUploadImagesClick = () => {
+    imagesFileInputRef.current?.click();
+  };
+
   const columns = useMemo<GridColDef<IPromoCat>[]>(
     () => [
       {
@@ -56,7 +65,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         sortable: false,
         field: "promocode",
         headerName: t("promocat.promocode"),
-        flex: 1
+        flex: 1,
       },
       {
         disableColumnMenu: true,
@@ -90,7 +99,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
               sx={{
                 color: "text.secondary",
               }}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               {/* <VisibilityOutlined /> */}
             </IconButton>
@@ -98,7 +107,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         },
       },
     ],
-    [t],
+    [t]
   );
 
   const { dataGridProps, tableQuery } = useDataGrid<
@@ -145,6 +154,38 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
     event.target.value = "";
   };
 
+  const handleImagesFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      await httpClient.post("/promo-cats/upload/images", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      openNotification?.({
+        type: "success",
+        message: t("promocat.upload.success"),
+        description: file.name,
+      });
+    } catch (error) {
+      console.error("Failed to upload images archive", error);
+
+      openNotification?.({
+        type: "error",
+        message: t("promocat.upload.error"),
+      });
+    }
+
+    event.target.value = "";
+  };
+
   return (
     <>
       <RefineListView
@@ -155,7 +196,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
               <Autocomplete
                 size="small"
                 sx={{
-                  width: "250px"
+                  width: "250px",
                 }}
                 options={channelOptions}
                 getOptionLabel={(option) =>
@@ -177,17 +218,13 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
                     await setPromoCatsSettings({ channel_id });
                     openNotification?.({
                       type: "success",
-                      message: t(
-                        "promocat.settings.channel.success"
-                      ),
+                      message: t("promocat.settings.channel.success"),
                     });
                   } catch (error) {
                     console.error("Failed to update promo cats channel", error);
                     openNotification?.({
                       type: "error",
-                      message: t(
-                        "promocat.settings.channel.error"
-                      ),
+                      message: t("promocat.settings.channel.error"),
                     });
                   }
                 }}
@@ -204,7 +241,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
                 type="time"
                 size="small"
                 sx={{
-                  width: "150px"
+                  width: "150px",
                 }}
                 label={t("promocat.postTime")}
                 InputLabelProps={{ shrink: true }}
@@ -212,11 +249,11 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
                 value={
                   settings?.post_time
                     ? (() => {
-                      const d = new Date(settings.post_time);
-                      const hh = String(d.getHours()).padStart(2, "0");
-                      const mm = String(d.getMinutes()).padStart(2, "0");
-                      return `${hh}:${mm}`;
-                    })()
+                        const d = new Date(settings.post_time);
+                        const hh = String(d.getHours()).padStart(2, "0");
+                        const mm = String(d.getMinutes()).padStart(2, "0");
+                        return `${hh}:${mm}`;
+                      })()
                     : ""
                 }
                 onChange={async (event: ChangeEvent<HTMLInputElement>) => {
@@ -246,18 +283,14 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
                     );
                     openNotification?.({
                       type: "error",
-                      message: t(
-                        "promocat.settings.time.error"
-                      ),
+                      message: t("promocat.settings.time.error"),
                     });
                     return;
                   }
 
                   openNotification?.({
                     type: "success",
-                    message: t(
-                      "promocat.settings.time.success"
-                    ),
+                    message: t("promocat.settings.time.success"),
                   });
                 }}
               />
@@ -270,6 +303,13 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
               style={{ display: "none" }}
               onChange={handlePromocodesFileChange}
             />
+            <input
+              type="file"
+              ref={imagesFileInputRef}
+              accept=".zip,application/zip"
+              style={{ display: "none" }}
+              onChange={handleImagesFileChange}
+            />
 
             <Button variant="contained" onClick={handleUploadPromocodesClick}>
               {t("uploadPromocodes")}
@@ -279,9 +319,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
 
             <Button
               variant="contained"
-              onClick={() => {
-                return;
-              }}
+              onClick={handleUploadImagesClick}
             >
               {t("uploadImages")}
             </Button>
@@ -291,7 +329,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
         <DataGrid
           {...dataGridProps}
           columns={columns}
-          getRowId={row => row.id}
+          getRowId={(row) => row.id}
           pageSizeOptions={[10, 20, 50, 100]}
         />
       </RefineListView>
@@ -299,3 +337,5 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
     </>
   );
 };
+
+export default PromoCatList;

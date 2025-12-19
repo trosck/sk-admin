@@ -1,20 +1,12 @@
 import React from "react";
-import {
-  useGetToPath,
-  useGo,
-  useShow,
-  useTranslate,
-} from "@refinedev/core";
+import { useGetToPath, useGo, useShow, useTranslate } from "@refinedev/core";
 import { useSearchParams } from "react-router";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import type { IScheduledPost } from "../../interfaces";
-import {
-  Drawer,
-  DrawerHeader,
-} from "../../components";
+import { Drawer, DrawerHeader } from "../../components";
 import { useChannels } from "../../api/channels";
 import StarterKit from "@tiptap/starter-kit";
 import { Mark } from "@tiptap/core";
@@ -60,9 +52,7 @@ export const ScheduledPostShow = () => {
   const rteRef = useRef<any>(null);
 
   const getChannelName = (channelId: string): string => {
-    const channel = channels?.find(
-      (ch) => String(ch.id) === String(channelId)
-    );
+    const channel = channels?.find((ch) => String(ch.id) === String(channelId));
     return (channel as { name?: string })?.name || channelId;
   };
 
@@ -121,12 +111,8 @@ export const ScheduledPostShow = () => {
 
         <Paper>
           <Stack spacing="16px" padding="24px">
-            <Typography variant="h6">
-              {$t("scheduledPost.status")}
-            </Typography>
-            <Typography color="text.secondary">
-              {post.status}
-            </Typography>
+            <Typography variant="h6">{$t("scheduledPost.status")}</Typography>
+            <Typography color="text.secondary">{post.status}</Typography>
           </Stack>
         </Paper>
 
@@ -143,9 +129,7 @@ export const ScheduledPostShow = () => {
 
         <Paper>
           <Stack spacing="16px" padding="24px">
-            <Typography variant="h6">
-              {$t("scheduledPost.text")}
-            </Typography>
+            <Typography variant="h6">{$t("scheduledPost.text")}</Typography>
             <Box
               sx={{
                 border: "1px solid",
@@ -168,9 +152,7 @@ export const ScheduledPostShow = () => {
         {post.media.length > 0 && (
           <Paper>
             <Stack spacing="16px" padding="24px">
-              <Typography variant="h6">
-                {$t("scheduledPost.media")}
-              </Typography>
+              <Typography variant="h6">{$t("scheduledPost.media")}</Typography>
               <Box
                 component="img"
                 src={post.media}
@@ -194,9 +176,7 @@ export const ScheduledPostShow = () => {
               <Typography variant="h6" color="error">
                 {$t("scheduledPost.error")}
               </Typography>
-              <Typography color="error">
-                {post.error}
-              </Typography>
+              <Typography color="error">{post.error}</Typography>
             </Stack>
           </Paper>
         )}
@@ -204,3 +184,5 @@ export const ScheduledPostShow = () => {
     </Drawer>
   );
 };
+
+export default ScheduledPostShow;

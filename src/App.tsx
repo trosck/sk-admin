@@ -1,3 +1,5 @@
+import { lazy } from "react";
+
 import { Authenticated, Refine } from "@refinedev/core";
 import { KBarProvider } from "@refinedev/kbar";
 import {
@@ -6,34 +8,43 @@ import {
   ThemedLayout,
   RefineSnackbarProvider,
 } from "@refinedev/mui";
+
+import { Box } from "@mui/material";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import CssBaseline from "@mui/material/CssBaseline";
+
 import routerProvider, {
   CatchAllNavigate,
   NavigateToResource,
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
+
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
+
 import { useTranslation } from "react-i18next";
 
-import PetsIcon from '@mui/icons-material/Pets';
-import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
-import AttractionsIcon from '@mui/icons-material/Attractions';
+import PetsIcon from "@mui/icons-material/Pets";
+import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
+import AttractionsIcon from "@mui/icons-material/Attractions";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 
 import { authProvider } from "./authProvider";
 import { DashboardPage } from "./pages/dashboard";
-import { UserList } from "./pages/users";
 import { AuthPage } from "./pages/auth";
 import { ColorModeContextProvider } from "./contexts";
 import { Header, Title } from "./components";
 import { useAutoLoginForDemo } from "./hooks";
 import { dataProvider } from "./dataProvider";
-import { PromoCatList } from "./pages/promo-cats";
 import { UserShow } from "./pages/users/show";
-import { ScheduledPostList, ScheduledPostCreate, ScheduledPostShow } from "./pages/scheduled-posts";
-import { Box } from "@mui/material";
+
+const UserList = lazy(() => import("./pages/users/list"));
+const PromoCatList = lazy(() => import("./pages/promo-cats/list"));
+const ScheduledPostList = lazy(() => import("./pages/scheduled-posts/list"));
+const ScheduledPostShow = lazy(() => import("./pages/scheduled-posts/show"));
+const ScheduledPostCreate = lazy(
+  () => import("./pages/scheduled-posts/create")
+);
 
 const App: React.FC = () => {
   // This hook is used to automatically login the user.
@@ -171,9 +182,7 @@ const App: React.FC = () => {
                   >
                     {/* <Route path="create" element={<ScheduledPostCreate />} /> */}
                   </Route>
-
                 </Route>
-
 
                 <Route
                   element={
@@ -240,12 +249,10 @@ const App: React.FC = () => {
                 >
                   <Route path="*" element={<ErrorComponent />} />
                 </Route>
-
               </Routes>
 
               <UnsavedChangesNotifier />
               <DocumentTitleHandler />
-
             </Refine>
           </RefineSnackbarProvider>
         </ColorModeContextProvider>

@@ -158,3 +158,5 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
     </>
   );
 };
+
+export default ScheduledPostList
