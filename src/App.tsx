@@ -7,6 +7,7 @@ import {
   useNotificationProvider,
   ThemedLayout,
   RefineSnackbarProvider,
+  RefineThemes,
 } from "@refinedev/mui";
 
 import { Box } from "@mui/material";
@@ -33,10 +34,10 @@ import { authProvider } from "./authProvider";
 import { DashboardPage } from "./pages/dashboard";
 import { ColorModeContextProvider } from "./contexts";
 import { Header, Title } from "./components";
-import { useAutoLoginForDemo } from "./hooks";
 import { dataProvider } from "./dataProvider";
 import { UserShow } from "./pages/users/show";
 import { PasswordOnlyLogin } from "./pages/auth";
+import { ThemeProvider } from "@emotion/react";
 
 const UserList = lazy(() => import("./pages/users/list"));
 const PromoCatList = lazy(() => import("./pages/promo-cats/list"));
@@ -61,147 +62,150 @@ const App: React.FC = () => {
           <CssBaseline />
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
           <RefineSnackbarProvider>
-            <Refine
-              routerProvider={routerProvider}
-              dataProvider={dataProvider}
-              authProvider={authProvider}
-              i18nProvider={i18nProvider}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                breadcrumb: false,
-              }}
-              notificationProvider={useNotificationProvider}
-              resources={[
-                {
-                  name: "users",
-                  list: "/users",
-                  show: "/users/:id",
-                  meta: {
-                    icon: <AccountCircleOutlinedIcon />,
+            <ThemeProvider theme={RefineThemes.PurpleDark}>
+              <Refine
+                routerProvider={routerProvider}
+                dataProvider={dataProvider}
+                authProvider={authProvider}
+                i18nProvider={i18nProvider}
+                options={{
+                  syncWithLocation: true,
+                  warnWhenUnsavedChanges: true,
+                  breadcrumb: false,
+                }}
+                notificationProvider={useNotificationProvider}
+                resources={[
+                  {
+                    name: "users",
+                    list: "/users",
+                    show: "/users/:id",
+                    meta: {
+                      icon: <AccountCircleOutlinedIcon />,
+                    },
                   },
-                },
-                {
-                  name: "promo-cats",
-                  list: "/promo-cats",
-                  meta: {
-                    icon: <PetsIcon />,
+                  {
+                    name: "promo-cats",
+                    list: "/promo-cats",
+                    meta: {
+                      icon: <PetsIcon />,
+                    },
                   },
-                },
-                {
-                  name: "scheduled-posts",
-                  list: "/scheduled-posts",
-                  show: "/scheduled-posts/:id",
-                  create: "/scheduled-posts/create",
-                  meta: {
-                    icon: <DynamicFeedIcon />,
+                  {
+                    name: "scheduled-posts",
+                    list: "/scheduled-posts",
+                    show: "/scheduled-posts/:id",
+                    create: "/scheduled-posts/create",
+                    meta: {
+                      icon: <DynamicFeedIcon />,
+                    },
                   },
-                },
-                {
-                  name: "wheel-of-fortune",
-                  list: "wheel-of-fortune",
-                  meta: {
-                    label: "Wheel of Fortune",
-                    icon: <AttractionsIcon />,
+                  {
+                    name: "wheel-of-fortune",
+                    list: "wheel-of-fortune",
+                    meta: {
+                      label: "Wheel of Fortune",
+                      icon: <AttractionsIcon />,
+                    },
                   },
-                },
-              ]}
-            >
-              <Routes>
-                <Route
-                  element={
-                    <Authenticated
-                      key="authenticated-routes"
-                      fallback={<CatchAllNavigate to="/login" />}
-                    >
-                      <ThemedLayout Header={Header} Title={Title}>
-                        <Box
-                          sx={{
-                            maxWidth: "1200px",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                          }}
-                        >
+                ]}
+              >
+                <Routes>
+                  <Route
+                    element={
+                      <Authenticated
+                        key="authenticated-routes"
+                        fallback={<CatchAllNavigate to="/login" />}
+                      >
+                        <ThemedLayout Header={Header} Title={Title}>
+                          <CssBaseline />
+                          <Box
+                            sx={{
+                              maxWidth: "1200px",
+                              marginLeft: "auto",
+                              marginRight: "auto",
+                            }}
+                          >
+                            <Outlet />
+                          </Box>
+                        </ThemedLayout>
+                      </Authenticated>
+                    }
+                  >
+                    <Route index element={<DashboardPage />} />
+
+                    <Route
+                      path="/users"
+                      element={
+                        <UserList>
                           <Outlet />
-                        </Box>
-                      </ThemedLayout>
-                    </Authenticated>
-                  }
-                >
-                  <Route index element={<DashboardPage />} />
+                        </UserList>
+                      }
+                    >
+                      <Route path=":id" element={<UserShow />} />
+                    </Route>
 
-                  <Route
-                    path="/users"
-                    element={
-                      <UserList>
-                        <Outlet />
-                      </UserList>
-                    }
-                  >
-                    <Route path=":id" element={<UserShow />} />
+                    <Route
+                      path="/scheduled-posts"
+                      element={
+                        <ScheduledPostList>
+                          <Outlet />
+                        </ScheduledPostList>
+                      }
+                    >
+                      <Route path="create" element={<ScheduledPostCreate />} />
+                      <Route path=":id" element={<ScheduledPostShow />} />
+                    </Route>
+
+                    <Route
+                      path="/promo-cats"
+                      element={
+                        <PromoCatList>
+                          <Outlet />
+                        </PromoCatList>
+                      }
+                    >
+                      {/* <Route path="create" element={<ScheduledPostCreate />} /> */}
+                    </Route>
+
+                    <Route
+                      path="/wheel-of-fortune"
+                      element={
+                        <>
+                          <Outlet />
+                        </>
+                      }
+                    >
+                      {/* <Route path="create" element={<ScheduledPostCreate />} /> */}
+                    </Route>
                   </Route>
 
                   <Route
-                    path="/scheduled-posts"
                     element={
-                      <ScheduledPostList>
-                        <Outlet />
-                      </ScheduledPostList>
+                      <Authenticated key="auth-pages" fallback={<Outlet />}>
+                        <NavigateToResource resource="dashboard" />
+                      </Authenticated>
                     }
                   >
-                    <Route path="create" element={<ScheduledPostCreate />} />
-                    <Route path=":id" element={<ScheduledPostShow />} />
+                    <Route path="/login" element={<PasswordOnlyLogin />} />
                   </Route>
 
                   <Route
-                    path="/promo-cats"
                     element={
-                      <PromoCatList>
-                        <Outlet />
-                      </PromoCatList>
+                      <Authenticated key="catch-all">
+                        <ThemedLayout Header={Header} Title={Title}>
+                          <Outlet />
+                        </ThemedLayout>
+                      </Authenticated>
                     }
                   >
-                    {/* <Route path="create" element={<ScheduledPostCreate />} /> */}
+                    <Route path="*" element={<ErrorComponent />} />
                   </Route>
+                </Routes>
 
-                  <Route
-                    path="/wheel-of-fortune"
-                    element={
-                      <>
-                        <Outlet />
-                      </>
-                    }
-                  >
-                    {/* <Route path="create" element={<ScheduledPostCreate />} /> */}
-                  </Route>
-                </Route>
-
-                <Route
-                  element={
-                    <Authenticated key="auth-pages" fallback={<Outlet />}>
-                      <NavigateToResource resource="dashboard" />
-                    </Authenticated>
-                  }
-                >
-                  <Route path="/login" element={<PasswordOnlyLogin />} />
-                </Route>
-
-                <Route
-                  element={
-                    <Authenticated key="catch-all">
-                      <ThemedLayout Header={Header} Title={Title}>
-                        <Outlet />
-                      </ThemedLayout>
-                    </Authenticated>
-                  }
-                >
-                  <Route path="*" element={<ErrorComponent />} />
-                </Route>
-              </Routes>
-
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-            </Refine>
+                <UnsavedChangesNotifier />
+                <DocumentTitleHandler />
+              </Refine>
+            </ThemeProvider>
           </RefineSnackbarProvider>
         </ColorModeContextProvider>
       </KBarProvider>
