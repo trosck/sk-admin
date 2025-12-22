@@ -117,6 +117,17 @@ const App: React.FC = () => {
             >
               <Routes>
                 <Route
+                  path="/"
+                  element={
+                    <Authenticated
+                      key="root-redirect"
+                      fallback={<CatchAllNavigate to="/login" />}
+                    >
+                      <NavigateToResource resource="users" />
+                    </Authenticated>
+                  }
+                />
+                <Route
                   element={
                     <Authenticated
                       key="authenticated-routes"
