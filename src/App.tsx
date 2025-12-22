@@ -43,6 +43,9 @@ const ScheduledPostShow = lazy(() => import("./pages/scheduled-posts/show"));
 const ScheduledPostCreate = lazy(
   () => import("./pages/scheduled-posts/create")
 );
+const ScheduledPostEdit = lazy(
+  () => import("./pages/scheduled-posts/edit")
+);
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -101,6 +104,7 @@ const App: React.FC = () => {
                   list: "/scheduled-posts",
                   show: "/scheduled-posts/:id",
                   create: "/scheduled-posts/create",
+                  edit: "/scheduled-posts/:id/edit",
                   meta: {
                     icon: <DynamicFeedIcon />,
                   },
@@ -169,6 +173,7 @@ const App: React.FC = () => {
                   >
                     <Route path="create" element={<ScheduledPostCreate />} />
                     <Route path=":id" element={<ScheduledPostShow />} />
+                    <Route path=":id/edit" element={<ScheduledPostEdit />} />
                   </Route>
 
                   <Route

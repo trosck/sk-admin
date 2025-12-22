@@ -96,14 +96,19 @@ export const ScheduledPostShow = () => {
         },
       }}
     >
-      <DrawerHeader onCloseClick={onDrawerClose} />
-      <Stack spacing="32px" padding="32px 32px 56px 32px">
+      <Stack
+        spacing="32px"
+        padding="32px 32px 56px 32px"
+        sx={{
+          background: "black",
+        }}
+      >
         <Paper>
           <Stack spacing="16px" padding="24px">
             <Typography variant="h6">
               {$t("scheduledPost.channelName")}
             </Typography>
-            <Typography color="text.secondary">
+            <Typography color="textSecondary">
               {getChannelName(post.channel_id)}
             </Typography>
           </Stack>
@@ -112,7 +117,7 @@ export const ScheduledPostShow = () => {
         <Paper>
           <Stack spacing="16px" padding="24px">
             <Typography variant="h6">{$t("scheduledPost.status")}</Typography>
-            <Typography color="text.secondary">{post.status}</Typography>
+            <Typography color="textSecondary">{post.status}</Typography>
           </Stack>
         </Paper>
 
@@ -121,7 +126,7 @@ export const ScheduledPostShow = () => {
             <Typography variant="h6">
               {$t("scheduledPost.scheduled_at")}
             </Typography>
-            <Typography color="text.secondary">
+            <Typography color="textSecondary">
               {formatDate(post.scheduled_at)}
             </Typography>
           </Stack>

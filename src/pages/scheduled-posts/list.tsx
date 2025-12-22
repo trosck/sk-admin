@@ -12,6 +12,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
+import EditOutlined from "@mui/icons-material/EditOutlined";
 import Box from "@mui/material/Box";
 import { useLocation } from "react-router";
 import { useChannels } from "../../api/channels";
@@ -20,7 +21,7 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
   const go = useGo();
   const { pathname } = useLocation();
   const t = useTranslate();
-  const { createUrl, showUrl } = useNavigation();
+  const { createUrl, showUrl, editUrl } = useNavigation();
   const { data: channels } = useChannels();
 
   const { dataGridProps } = useDataGrid<
@@ -103,25 +104,46 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
         filterable: false,
         renderCell: function render({ row }) {
           return (
-            <IconButton
-              sx={{
-                color: "text.secondary",
-              }}
-              onClick={() => {
-                return go({
-                  to: `${showUrl("scheduled-posts", row.id)}`,
-                  query: {
-                    to: pathname,
-                  },
-                  options: {
-                    keepQuery: true,
-                  },
-                  type: "replace",
-                });
-              }}
-            >
-              <VisibilityOutlined />
-            </IconButton>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <IconButton
+                sx={{
+                  color: "text.secondary",
+                }}
+                onClick={() => {
+                  return go({
+                    to: `${showUrl("scheduled-posts", row.id)}`,
+                    query: {
+                      to: pathname,
+                    },
+                    options: {
+                      keepQuery: true,
+                    },
+                    type: "replace",
+                  });
+                }}
+              >
+                <VisibilityOutlined />
+              </IconButton>
+              <IconButton
+                sx={{
+                  color: "text.secondary",
+                }}
+                onClick={() => {
+                  return go({
+                    to: `${editUrl("scheduled-posts", row.id)}`,
+                    query: {
+                      to: pathname,
+                    },
+                    options: {
+                      keepQuery: true,
+                    },
+                    type: "replace",
+                  });
+                }}
+              >
+                <EditOutlined />
+              </IconButton>
+            </Box>
           );
         },
       },

@@ -12,10 +12,7 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { IUser } from "../../interfaces";
-import {
-  Drawer,
-  DrawerHeader,
-} from "../../components";
+import { Drawer, DrawerHeader } from "../../components";
 import { getAvatarUrl } from "./utils";
 import { Button, TextField } from "@mui/material";
 import { incrementUserXP } from "../../api";
@@ -25,10 +22,10 @@ export const UserShow = () => {
   const [searchParams] = useSearchParams();
   const go = useGo();
   const $t = useTranslate();
-  const invalidate = useInvalidate()
+  const invalidate = useInvalidate();
 
   const [valueXP, setValueXP] = useState("");
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
 
   const { query: queryResult } = useShow<IUser>();
   const user = queryResult.data?.data;
@@ -52,14 +49,15 @@ export const UserShow = () => {
   };
 
   async function giveUserXP() {
-    setLoading(true)
+    setLoading(true);
 
     if (user) {
-      await incrementUserXP(user?.id, +valueXP)
-      invalidate({ resource: "users", invalidates: ["all"] })
+      await incrementUserXP(user?.id, +valueXP);
+      invalidate({ resource: "users", invalidates: ["all"] });
     }
 
-    setLoading(false)
+    setLoading(false);
+    setValueXP("0");
   }
 
   return (
@@ -74,8 +72,14 @@ export const UserShow = () => {
         },
       }}
     >
-      <DrawerHeader onCloseClick={onDrawerCLose} />
-      <Stack spacing="32px" padding="32px 32px 56px 32px">
+      <Stack
+        spacing="32px"
+        padding="32px 32px 56px 32px"
+        sx={{
+          background: "white",
+          height: "100%",
+        }}
+      >
         <Stack spacing="28px" direction="row" alignItems="center">
           <Avatar
             sx={{
@@ -95,27 +99,67 @@ export const UserShow = () => {
 
         <Paper>
           <Stack direction="row" alignItems="center" padding="24px">
-            <Typography>{$t("users.fields.level")}: {user?.level}</Typography>
+            <Typography>
+              {$t("users.fields.level")}: {user?.level}
+            </Typography>
           </Stack>
         </Paper>
 
         <Paper>
           <Stack direction="row" alignItems="center" padding="24px">
-            <Typography>{$t("users.fields.total_xp")}: {user?.total_xp}</Typography>
+            <Typography>
+              {$t("users.fields.total_xp")}: {user?.total_xp}
+            </Typography>
           </Stack>
         </Paper>
 
         <Paper>
           <Stack direction="row" alignItems="center" padding="24px">
-            <Typography>{$t("users.fields.cookies")}: {user?.cookies}</Typography>
+            <Typography>
+              {$t("users.fields.cookies")}: {user?.cookies}
+            </Typography>
           </Stack>
         </Paper>
 
         <Paper>
-          <Stack direction="row" alignItems="center" padding="24px" spacing="8px">
+          <Stack
+            direction="row"
+            alignItems="center"
+            padding="24px"
+            spacing="8px"
+          >
             <TextField
+              type="number"
+              size="small"
+              sx={{
+                maxWidth: "160px",
+                backgroundColor: "#ffffff",
+                borderRadius: "5px",
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#AB47BC",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#9C27B0",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#7B1FA2",
+                  },
+                },
+                "& .MuiInputBase-input": {
+                  color: "#111827",
+                },
+              }}
               value={valueXP}
-              onChange={e => setValueXP(e.target.value)}
+              onChange={(e) => {
+                const onlyDigits = e.target.value.replace(/[^0-9]/g, "");
+                setValueXP(onlyDigits);
+              }}
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                min: 0,
+              }}
             />
 
             <Button
@@ -127,7 +171,6 @@ export const UserShow = () => {
             </Button>
           </Stack>
         </Paper>
-
 
         {/* <DataGrid {...dataGridProps} columns={columns} hideFooter /> */}
       </Stack>

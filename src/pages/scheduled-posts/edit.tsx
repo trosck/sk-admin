@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import {
   useGetToPath,
   useGo,
   useTranslate,
-  useCreate,
   useNotification,
   useInvalidate,
+  useShow,
+  useUpdate,
 } from "@refinedev/core";
 import { useSearchParams } from "react-router";
 import { Controller, useForm } from "react-hook-form";
@@ -18,7 +19,7 @@ import Button from "@mui/material/Button";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import { Drawer, DrawerHeader } from "../../components";
+import { Drawer } from "../../components";
 import { useChannels } from "../../api/channels";
 import { IScheduledPost } from "../../interfaces";
 import ImageIcon from "@mui/icons-material/Image";
@@ -41,9 +42,7 @@ import {
   RichTextEditor,
   type RichTextEditorRef,
 } from "mui-tiptap";
-import { useRef } from "react";
 
-// Создаем расширение Underline вручную, так как пакет может быть не установлен
 const Underline = Mark.create({
   name: "underline",
   // @ts-ignore - parseHTML является валидным свойством для Mark
@@ -100,33 +99,22 @@ interface FormValues {
   media: File | null;
 }
 
-/**
- * Converts datetime-local string to ISO string for API
- */
 const toISOString = (datetimeLocal: string): string => {
   if (!datetimeLocal) return "";
-  // datetime-local format: "YYYY-MM-DDTHH:mm"
-  // Convert to ISO: "YYYY-MM-DDTHH:mm:ss.sssZ"
   return new Date(datetimeLocal).toISOString();
 };
 
-/**
- * Gets default scheduled time (1 hour from now) in datetime-local format
- */
-const getDefaultScheduledAt = (): string => {
-  const date = new Date(Date.now() + 60 * 60 * 1000);
-  // Format as YYYY-MM-DDTHH:mm for datetime-local input
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
+const toDatetimeLocal = (date: Date | string): string => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-/**
- * Validates that scheduled_at is in the future
- */
 const validateScheduledAt = (value: string): boolean | string => {
   if (!value) return "errors.required.field";
   const scheduledDate = new Date(value);
@@ -137,7 +125,7 @@ const validateScheduledAt = (value: string): boolean | string => {
   return true;
 };
 
-export const ScheduledPostCreate: React.FC = () => {
+export const ScheduledPostEdit: React.FC = () => {
   const getToPath = useGetToPath();
   const [searchParams] = useSearchParams();
   const go = useGo();
@@ -145,9 +133,12 @@ export const ScheduledPostCreate: React.FC = () => {
   const { open } = useNotification();
   const invalidate = useInvalidate();
 
-  const { mutate: createPost } = useCreate<IScheduledPost>();
+  const { query } = useShow<IScheduledPost>();
+  const post = query.data?.data;
+
+  const { mutate: updatePost } = useUpdate<IScheduledPost>();
   const { data: channels, isLoading: channelsLoading } = useChannels();
-  const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     control,
@@ -156,17 +147,29 @@ export const ScheduledPostCreate: React.FC = () => {
     formState: { errors, isSubmitting },
     watch,
     setValue,
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
       channel_id: "",
       text: "",
-      scheduled_at: getDefaultScheduledAt(),
+      scheduled_at: "",
       media: null,
     },
   });
 
   const mediaFile = watch("media");
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!post) return;
+    reset({
+      channel_id: post.channel_id,
+      text: post.text || "",
+      scheduled_at: toDatetimeLocal(post.scheduled_at),
+      media: null,
+    });
+    setMediaPreview(post.media || null);
+  }, [post, reset]);
 
   const channelOptions = useMemo(() => {
     return (channels ?? []).map((channel) => ({
@@ -189,7 +192,6 @@ export const ScheduledPostCreate: React.FC = () => {
         open?.({
           type: "error",
           message: t("notifications.error"),
-          // description: "Пожалуйста, выберите изображение",
         });
       }
     }
@@ -219,12 +221,16 @@ export const ScheduledPostCreate: React.FC = () => {
   };
 
   const onSubmit = async (values: FormValues) => {
-    try {
-      setIsCreating(true);
+    if (!post) return;
 
-      let mediaBase64 = "";
+    try {
+      setIsSaving(true);
+
+      let mediaBase64 = post.media || "";
       if (values.media) {
         mediaBase64 = await fileToBase64(values.media);
+      } else if (!mediaPreview) {
+        mediaBase64 = "";
       }
 
       const payload = {
@@ -234,9 +240,10 @@ export const ScheduledPostCreate: React.FC = () => {
         media: mediaBase64,
       };
 
-      createPost(
+      updatePost(
         {
           resource: "scheduled-posts",
+          id: post.id,
           values: payload,
         },
         {
@@ -245,33 +252,33 @@ export const ScheduledPostCreate: React.FC = () => {
             open?.({
               type: "success",
               message: t("notifications.success"),
-              description: t("scheduledPost.notifications.createSuccess"),
+              description: t("scheduledPost.notifications.updateSuccess"),
             });
-            setIsCreating(false);
+            setIsSaving(false);
             onDrawerClose();
           },
           onError: (error) => {
-            setIsCreating(false);
+            setIsSaving(false);
             open?.({
               type: "error",
               message: t("notifications.error"),
               description:
-                error?.message || t("scheduledPost.notifications.createError"),
+                error?.message || t("scheduledPost.notifications.updateError"),
             });
           },
         }
       );
-    } catch (error) {
-      setIsCreating(false);
+    } catch (_error) {
+      setIsSaving(false);
       open?.({
         type: "error",
         message: t("notifications.error"),
-        description: t("scheduledPost.notifications.createError"),
+        description: t("scheduledPost.notifications.updateError"),
       });
     }
   };
 
-  const isLoading = isSubmitting || isCreating;
+  const isLoading = isSubmitting || isSaving;
 
   const rteRef = useRef<RichTextEditorRef>(null);
 
@@ -292,8 +299,6 @@ export const ScheduledPostCreate: React.FC = () => {
         window.prompt("Текст ссылки (по умолчанию URL)", href) ?? href;
       if (!label) return;
 
-      // Вставляем готовый <a> и пробел после него — курсор окажется после пробела,
-      // и дальше будет вводиться обычный текст
       editor
         .chain()
         .focus()
@@ -305,8 +310,6 @@ export const ScheduledPostCreate: React.FC = () => {
       return;
     }
 
-    // Есть выделенный текст — делаем его ссылкой и добавляем пробел после,
-    // чтобы дальнейший ввод шел обычным текстом
     editor
       .chain()
       .focus()
@@ -315,6 +318,10 @@ export const ScheduledPostCreate: React.FC = () => {
       .insertContent(" ")
       .run();
   };
+
+  if (!post) {
+    return null;
+  }
 
   return (
     <Drawer
@@ -334,7 +341,7 @@ export const ScheduledPostCreate: React.FC = () => {
         <Paper>
           <Stack spacing="16px" padding="24px">
             <Typography variant="h6">
-              {t("scheduledPost.scheduledPosts")}
+              {t("scheduledPost.editScheduledPost")}
             </Typography>
 
             <Controller
@@ -343,7 +350,6 @@ export const ScheduledPostCreate: React.FC = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <Autocomplete
-                  // sx={{ color: "black" }}
                   loading={channelsLoading}
                   options={channelOptions}
                   getOptionLabel={(option) =>
@@ -425,18 +431,18 @@ export const ScheduledPostCreate: React.FC = () => {
               <input
                 accept="image/*"
                 style={{ display: "none" }}
-                id="media-upload"
+                id="media-upload-edit"
                 type="file"
                 onChange={handleFileChange}
               />
-              <label htmlFor="media-upload">
+              <label htmlFor="media-upload-edit">
                 <Button
                   variant="outlined"
                   component="span"
                   startIcon={<ImageIcon />}
                   fullWidth
                 >
-                  {mediaFile
+                  {mediaFile || mediaPreview
                     ? t("scheduledPost.changeImage")
                     : t("scheduledPost.uploadImage")}
                 </Button>
@@ -519,4 +525,6 @@ export const ScheduledPostCreate: React.FC = () => {
   );
 };
 
-export default ScheduledPostCreate;
+export default ScheduledPostEdit;
+
+
