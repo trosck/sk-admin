@@ -154,23 +154,51 @@ export const ScheduledPostShow = () => {
           </Stack>
         </Paper>
 
-        {post.media.length > 0 && (
+        {post.media && post.media.length > 0 && (
           <Paper>
             <Stack spacing="16px" padding="24px">
               <Typography variant="h6">{$t("scheduledPost.media")}</Typography>
-              <Box
-                component="img"
-                src={post.media}
-                alt="Post media"
-                sx={{
-                  width: "100%",
-                  maxHeight: "400px",
-                  objectFit: "contain",
-                  borderRadius: 1,
-                  border: "1px solid",
-                  borderColor: "divider",
-                }}
-              />
+              <Stack spacing="16px">
+                {post.media.map((mediaItem) => {
+                  const getImageSrc = () => {
+                    const preview = mediaItem.preview;
+                    // Preview приходит как строка (base64 или data URL)
+                    if (typeof preview === 'string') {
+                      return preview.startsWith('data:')
+                        ? preview
+                        : `data:image/jpeg;base64,${preview}`;
+                    }
+                    // Если preview это объект с числовыми ключами, конвертируем в base64
+                    if (preview && typeof preview === 'object') {
+                      // Конвертируем объект {0: 255, 1: 216, ...} в массив байтов
+                      const keys = Object.keys(preview)
+                        .map(Number)
+                        .sort((a, b) => a - b);
+                      const bytes = keys.map(key => preview[key]);
+                      const binary = bytes.map(byte => String.fromCharCode(byte)).join('');
+                      return `data:image/jpeg;base64,${btoa(binary)}`;
+                    }
+                    return '';
+                  };
+
+                  return (
+                    <Box
+                      key={mediaItem.id}
+                      component="img"
+                      src={getImageSrc()}
+                      alt={mediaItem.path || "Post media"}
+                      sx={{
+                        width: "128px",
+                        height: "128px",
+                        objectFit: "cover",
+                        borderRadius: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
+                      }}
+                    />
+                  );
+                })}
+              </Stack>
             </Stack>
           </Paper>
         )}

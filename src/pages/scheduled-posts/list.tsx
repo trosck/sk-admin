@@ -132,25 +132,29 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
               >
                 <VisibilityOutlined />
               </IconButton>
-              <IconButton
-                sx={{
-                  color: "text.secondary",
-                }}
-                onClick={() => {
-                  return go({
-                    to: `${editUrl("scheduled-posts", row.id)}`,
-                    query: {
-                      to: pathname,
-                    },
-                    options: {
-                      keepQuery: true,
-                    },
-                    type: "replace",
-                  });
-                }}
-              >
-                <EditOutlined />
-              </IconButton>
+              {
+                row.status !== "SENT" && (
+                  <IconButton
+                    sx={{
+                      color: "text.secondary",
+                    }}
+                    onClick={() => {
+                      return go({
+                        to: `${editUrl("scheduled-posts", row.id)}`,
+                        query: {
+                          to: pathname,
+                        },
+                        options: {
+                          keepQuery: true,
+                        },
+                        type: "replace",
+                      });
+                    }}
+                  >
+                    <EditOutlined />
+                  </IconButton>
+                )
+              }
               <IconButton
                 sx={{
                   color: "error.main",
@@ -158,7 +162,7 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
                 onClick={async () => {
                   const confirmed = window.confirm(
                     t("scheduledPost.confirmDelete") ||
-                      "Are you sure you want to delete this post?"
+                    "Are you sure you want to delete this post?"
                   );
                   if (!confirmed) return;
 

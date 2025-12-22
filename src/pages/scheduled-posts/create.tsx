@@ -3,7 +3,6 @@ import {
   useGetToPath,
   useGo,
   useTranslate,
-  useCreate,
   useNotification,
   useInvalidate,
 } from "@refinedev/core";
@@ -18,80 +17,12 @@ import Button from "@mui/material/Button";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import { Drawer, DrawerHeader } from "../../components";
+import { Drawer, RichTextEditorField } from "../../components";
 import { useChannels } from "../../api/channels";
-import { IScheduledPost } from "../../interfaces";
+import { httpClient } from "../../api/httpClient";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LinkIcon from "@mui/icons-material/Link";
-
-import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import { Mark } from "@tiptap/core";
-import {
-  MenuButtonBold,
-  MenuButtonItalic,
-  MenuButtonUnderline,
-  MenuButtonStrikethrough,
-  MenuButtonCode,
-  MenuButtonCodeBlock,
-  MenuButtonBlockquote,
-  MenuControlsContainer,
-  MenuDivider,
-  RichTextEditor,
-  type RichTextEditorRef,
-} from "mui-tiptap";
-import { useRef } from "react";
-
-// Создаем расширение Underline вручную, так как пакет может быть не установлен
-const Underline = Mark.create({
-  name: "underline",
-  // @ts-ignore - parseHTML является валидным свойством для Mark
-  parseHTML() {
-    return [
-      {
-        tag: "u",
-      },
-      {
-        style: "text-decoration",
-        getAttrs: (value: string) => value === "underline" && null,
-      },
-    ];
-  },
-  renderHTML() {
-    return ["u", 0];
-  },
-  addCommands() {
-    return {
-      setUnderline:
-        () =>
-        ({ commands }: any) => {
-          return commands.setMark(this.name);
-        },
-      toggleUnderline:
-        () =>
-        ({ commands }: any) => {
-          return commands.toggleMark(this.name);
-        },
-      unsetUnderline:
-        () =>
-        ({ commands }: any) => {
-          return commands.unsetMark(this.name);
-        },
-    };
-  },
-  addKeyboardShortcuts() {
-    return {
-      "Mod-u": () => this.editor.commands.toggleUnderline(),
-    };
-  },
-});
-
-const linkExtension = Link.configure({
-  autolink: true,
-  linkOnPaste: true,
-  openOnClick: false,
-});
+import EditIcon from "@mui/icons-material/Edit";
 
 interface FormValues {
   channel_id: string;
@@ -145,7 +76,6 @@ export const ScheduledPostCreate: React.FC = () => {
   const { open } = useNotification();
   const invalidate = useInvalidate();
 
-  const { mutate: createPost } = useCreate<IScheduledPost>();
   const { data: channels, isLoading: channelsLoading } = useChannels();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -200,15 +130,6 @@ export const ScheduledPostCreate: React.FC = () => {
     setMediaPreview(null);
   };
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const onDrawerClose = () => {
     go({
       to: searchParams.get("to") ?? getToPath({ action: "list" }) ?? "",
@@ -222,99 +143,48 @@ export const ScheduledPostCreate: React.FC = () => {
     try {
       setIsCreating(true);
 
-      let mediaBase64 = "";
+      // Создаем FormData
+      const formData = new FormData();
+      formData.append("channel_id", values.channel_id);
+      formData.append("text", values.text.trim());
+      formData.append("scheduled_at", toISOString(values.scheduled_at));
+
+      // Добавляем файл напрямую, если он есть
       if (values.media) {
-        mediaBase64 = await fileToBase64(values.media);
+        formData.append("file", values.media);
       }
 
-      const payload = {
-        channel_id: values.channel_id,
-        text: values.text.trim(),
-        scheduled_at: toISOString(values.scheduled_at),
-        media: mediaBase64,
-      };
-
-      createPost(
-        {
-          resource: "scheduled-posts",
-          values: payload,
+      await httpClient.post("/scheduled-posts", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          onSuccess: () => {
-            invalidate({ resource: "scheduled-posts", invalidates: ["list"] });
-            open?.({
-              type: "success",
-              message: t("notifications.success"),
-              description: t("scheduledPost.notifications.createSuccess"),
-            });
-            setIsCreating(false);
-            onDrawerClose();
-          },
-          onError: (error) => {
-            setIsCreating(false);
-            open?.({
-              type: "error",
-              message: t("notifications.error"),
-              description:
-                error?.message || t("scheduledPost.notifications.createError"),
-            });
-          },
-        }
-      );
-    } catch (error) {
+      });
+
+      invalidate({ resource: "scheduled-posts", invalidates: ["list"] });
+
+      open?.({
+        type: "success",
+        message: t("notifications.success"),
+        description: t("scheduledPost.notifications.createSuccess"),
+      });
+
+      setIsCreating(false);
+
+      onDrawerClose();
+    } catch (error: any) {
       setIsCreating(false);
       open?.({
         type: "error",
         message: t("notifications.error"),
-        description: t("scheduledPost.notifications.createError"),
+        description:
+          error?.response?.data?.message ||
+          error?.message ||
+          t("scheduledPost.notifications.createError"),
       });
     }
   };
 
   const isLoading = isSubmitting || isCreating;
-
-  const rteRef = useRef<RichTextEditorRef>(null);
-
-  const handleInsertNamedLink = () => {
-    const editor = rteRef.current?.editor;
-    if (!editor) return;
-
-    const href = window.prompt("Введите URL ссылки", "https://");
-    if (!href) {
-      return;
-    }
-
-    const { state } = editor;
-    const { empty, from, to } = state.selection;
-
-    if (empty) {
-      const label =
-        window.prompt("Текст ссылки (по умолчанию URL)", href) ?? href;
-      if (!label) return;
-
-      // Вставляем готовый <a> и пробел после него — курсор окажется после пробела,
-      // и дальше будет вводиться обычный текст
-      editor
-        .chain()
-        .focus()
-        .insertContent(
-          `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a> `
-        )
-        .run();
-
-      return;
-    }
-
-    // Есть выделенный текст — делаем его ссылкой и добавляем пробел после,
-    // чтобы дальнейший ввод шел обычным текстом
-    editor
-      .chain()
-      .focus()
-      .setLink({ href })
-      .setTextSelection(to)
-      .insertContent(" ")
-      .run();
-  };
 
   return (
     <Drawer
@@ -377,47 +247,12 @@ export const ScheduledPostCreate: React.FC = () => {
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <div>
-                  <RichTextEditor
-                    ref={rteRef}
-                    extensions={[StarterKit, Underline, linkExtension]}
-                    content={field.value || "<p></p>"}
-                    onUpdate={({ editor }) => {
-                      const html = editor.getHTML();
-                      field.onChange(html);
-                    }}
-                    renderControls={() => (
-                      <MenuControlsContainer>
-                        <MenuButtonBold />
-                        <MenuButtonItalic />
-                        <MenuButtonUnderline />
-                        <MenuButtonStrikethrough />
-                        <MenuDivider />
-                        <IconButton
-                          size="small"
-                          onClick={handleInsertNamedLink}
-                          sx={{ mr: 1 }}
-                        >
-                          <LinkIcon fontSize="small" />
-                        </IconButton>
-                        <MenuDivider />
-                        <MenuButtonCode />
-                        <MenuButtonCodeBlock />
-                        <MenuDivider />
-                        <MenuButtonBlockquote />
-                      </MenuControlsContainer>
-                    )}
-                  />
-                  {errors.text && (
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      sx={{ mt: 0.5, ml: 1.75 }}
-                    >
-                      {t("errors.required.field")}
-                    </Typography>
-                  )}
-                </div>
+                <RichTextEditorField
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.text}
+                  translate={t}
+                />
               )}
             />
 
@@ -429,25 +264,24 @@ export const ScheduledPostCreate: React.FC = () => {
                 type="file"
                 onChange={handleFileChange}
               />
-              <label htmlFor="media-upload">
-                <Button
-                  variant="outlined"
-                  component="span"
-                  startIcon={<ImageIcon />}
-                  fullWidth
-                >
-                  {mediaFile
-                    ? t("scheduledPost.changeImage")
-                    : t("scheduledPost.uploadImage")}
-                </Button>
-              </label>
+              {!mediaPreview && (
+                <label htmlFor="media-upload">
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    startIcon={<ImageIcon />}
+                    fullWidth
+                  >
+                    {t("scheduledPost.uploadImage")}
+                  </Button>
+                </label>
+              )}
               {mediaPreview && (
                 <Box
                   sx={{
                     mt: 2,
                     position: "relative",
                     display: "inline-block",
-                    width: "100%",
                   }}
                 >
                   <Box
@@ -455,29 +289,52 @@ export const ScheduledPostCreate: React.FC = () => {
                     src={mediaPreview}
                     alt="Preview"
                     sx={{
-                      width: "100%",
-                      maxHeight: "400px",
-                      objectFit: "contain",
+                      width: "128px",
+                      height: "128px",
+                      objectFit: "cover",
                       borderRadius: 1,
                       border: "1px solid",
                       borderColor: "divider",
                     }}
                   />
-                  <IconButton
-                    onClick={handleRemoveImage}
+                  <Stack
+                    direction="row"
+                    spacing={0.5}
                     sx={{
                       position: "absolute",
                       top: 8,
                       right: 8,
-                      bgcolor: "background.paper",
-                      "&:hover": {
-                        bgcolor: "error.main",
-                        color: "error.contrastText",
-                      },
                     }}
                   >
-                    <DeleteIcon />
-                  </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        document.getElementById("media-upload")?.click();
+                      }}
+                      size="small"
+                      sx={{
+                        bgcolor: "background.paper",
+                        "&:hover": {
+                          bgcolor: "primary.main",
+                          color: "primary.contrastText",
+                        },
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      onClick={handleRemoveImage}
+                      size="small"
+                      sx={{
+                        bgcolor: "background.paper",
+                        "&:hover": {
+                          bgcolor: "error.main",
+                          color: "error.contrastText",
+                        },
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </Box>
               )}
             </Box>

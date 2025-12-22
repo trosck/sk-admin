@@ -31,11 +31,18 @@ enum ScheduledPostStatus {
   FAILED = "FAILED",
 }
 
+export interface IMedia {
+  id: number;
+  path: string;
+  preview: Record<number, number> | string; // объект с числовыми ключами или строка base64
+  scheduledPostId?: number;
+}
+
 export interface IScheduledPost {
   id: number;
   channel_id: string;
   text: string;
-  media: string;
+  media: IMedia[];
   status: ScheduledPostStatus;
   error: string;
   scheduled_at: Date;
