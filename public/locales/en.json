@@ -25,6 +25,7 @@
   "scheduledPost": {
     "scheduledPosts": "Scheduled posts",
     "createTitle": "Create scheduled post",
+    "editScheduledPost": "Edit scheduled post",
     "channelId": "Channel ID",
     "channelName": "Channel",
     "text": "Text",
@@ -34,13 +35,18 @@
     "scheduled_at": "Scheduled at",
     "uploadImage": "Upload image",
     "changeImage": "Change image",
+    "confirmDelete": "Are you sure you want to delete this scheduled post?",
     "errors": {
       "scheduledAtMustBeFuture": "Scheduled time must be in the future",
       "invalidUrl": "Please enter a valid URL"
     },
     "notifications": {
       "createSuccess": "Scheduled post created successfully",
-      "createError": "Failed to create scheduled post"
+      "createError": "Failed to create scheduled post",
+      "updateSuccess": "Scheduled post updated successfully",
+      "updateError": "Failed to update scheduled post",
+      "deleteSuccess": "Scheduled post deleted successfully",
+      "deleteError": "Failed to delete scheduled post"
     }
   },
   "form": {

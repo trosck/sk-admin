@@ -4,6 +4,8 @@ import {
   useTranslate,
   useNavigation,
   useGo,
+  useNotification,
+  useInvalidate,
 } from "@refinedev/core";
 import { RefineListView } from "../../components";
 import { IFilterVariables, IScheduledPost } from "../../interfaces";
@@ -13,9 +15,11 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import Box from "@mui/material/Box";
 import { useLocation } from "react-router";
 import { useChannels } from "../../api/channels";
+import { httpClient } from "../../api";
 
 export const ScheduledPostList = ({ children }: PropsWithChildren) => {
   const go = useGo();
@@ -23,6 +27,8 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
   const t = useTranslate();
   const { createUrl, showUrl, editUrl } = useNavigation();
   const { data: channels } = useChannels();
+  const { open } = useNotification();
+  const invalidate = useInvalidate();
 
   const { dataGridProps } = useDataGrid<
     IScheduledPost,
@@ -44,6 +50,7 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
   const columns = useMemo<GridColDef<IScheduledPost>[]>(
     () => [
       {
+        flex: 1,
         sortable: false,
         field: "channel_id",
         headerName: t("scheduledPost.channelName"),
@@ -95,6 +102,7 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
         },
       },
       {
+        flex: 1,
         field: "actions",
         headerName: t("table.actions"),
         align: "center",
@@ -143,12 +151,50 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
               >
                 <EditOutlined />
               </IconButton>
+              <IconButton
+                sx={{
+                  color: "error.main",
+                }}
+                onClick={async () => {
+                  const confirmed = window.confirm(
+                    t("scheduledPost.confirmDelete") ||
+                      "Are you sure you want to delete this post?"
+                  );
+                  if (!confirmed) return;
+
+                  try {
+                    await httpClient.delete(`/scheduled-posts/${row.id}`);
+                    invalidate({
+                      resource: "scheduled-posts",
+                      invalidates: ["list"],
+                    });
+                    open?.({
+                      type: "success",
+                      message: t("notifications.success"),
+                      description: t(
+                        "scheduledPost.notifications.deleteSuccess"
+                      ),
+                    });
+                  } catch (error: any) {
+                    console.error("Failed to delete scheduled post", error);
+                    open?.({
+                      type: "error",
+                      message: t("notifications.error"),
+                      description:
+                        error?.message ||
+                        t("scheduledPost.notifications.deleteError"),
+                    });
+                  }
+                }}
+              >
+                <DeleteOutline />
+              </IconButton>
             </Box>
           );
         },
       },
     ],
-    [t, channels, go, pathname, showUrl],
+    [t, channels, go, pathname, showUrl, editUrl, open, invalidate],
   );
 
   return (

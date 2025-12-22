@@ -25,6 +25,7 @@
   "scheduledPost": {
     "scheduledPosts": "Отложенные посты",
     "createTitle": "Создать отложенный пост",
+    "editScheduledPost": "Редактировать отложенный пост",
     "channelId": "ID канала",
     "channelName": "Канал",
     "text": "Текст",
@@ -34,13 +35,18 @@
     "scheduled_at": "Дата отправки",
     "uploadImage": "Загрузить изображение",
     "changeImage": "Изменить изображение",
+    "confirmDelete": "Вы уверены, что хотите удалить этот отложенный пост?",
     "errors": {
       "scheduledAtMustBeFuture": "Время отправки должно быть в будущем",
       "invalidUrl": "Пожалуйста, введите корректный URL"
     },
     "notifications": {
       "createSuccess": "Отложенный пост успешно создан",
-      "createError": "Не удалось создать отложенный пост"
+      "createError": "Не удалось создать отложенный пост",
+      "updateSuccess": "Отложенный пост успешно обновлён",
+      "updateError": "Не удалось обновить отложенный пост",
+      "deleteSuccess": "Отложенный пост успешно удалён",
+      "deleteError": "Не удалось удалить отложенный пост"
     }
   },
   "form": {

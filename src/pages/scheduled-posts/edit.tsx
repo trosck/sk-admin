@@ -488,23 +488,43 @@ export const ScheduledPostEdit: React.FC = () => {
               )}
             </Box>
 
-            <TextField
-              label={t("scheduledPost.scheduled_at")}
-              type="datetime-local"
-              InputLabelProps={{ shrink: true }}
-              {...register("scheduled_at", {
-                required: true,
-                validate: validateScheduledAt,
-              })}
-              error={!!errors.scheduled_at}
-              helperText={
-                errors.scheduled_at
-                  ? typeof errors.scheduled_at.message === "string"
-                    ? t(errors.scheduled_at.message)
-                    : t("errors.required.field")
-                  : undefined
-              }
-            />
+            <Box
+              onClick={(e) => {
+                const input = (e.currentTarget as HTMLElement).querySelector(
+                  'input[type="datetime-local"]'
+                ) as HTMLInputElement;
+                if (input) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (typeof input.showPicker === "function") {
+                    input.showPicker();
+                  } else {
+                    input.focus();
+                    input.click();
+                  }
+                }
+              }}
+              sx={{ cursor: "pointer" }}
+            >
+              <TextField
+                label={t("scheduledPost.scheduled_at")}
+                type="datetime-local"
+                InputLabelProps={{ shrink: true }}
+                {...register("scheduled_at", {
+                  required: true,
+                  validate: validateScheduledAt,
+                })}
+                error={!!errors.scheduled_at}
+                helperText={
+                  errors.scheduled_at
+                    ? typeof errors.scheduled_at.message === "string"
+                      ? t(errors.scheduled_at.message)
+                      : t("errors.required.field")
+                    : undefined
+                }
+                fullWidth
+              />
+            </Box>
 
             <Stack direction="row" spacing="12px" justifyContent="flex-end">
               <Button variant="outlined" onClick={onDrawerClose}>
