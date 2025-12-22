@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 
 import "./i18n";
+import "./global.css";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 

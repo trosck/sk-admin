@@ -18,10 +18,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
 import i18n from "../../i18n";
-import { ColorModeContext } from "../../contexts";
 import { IIdentity } from "../../interfaces";
 
 interface IOptions {
@@ -34,8 +31,6 @@ interface IOptions {
 export const Header: React.FC<RefineThemedLayoutHeaderProps> = () => {
   const [value, setValue] = useState("");
   const [options, setOptions] = useState<IOptions[]>([]);
-
-  const { mode, setMode } = useContext(ColorModeContext);
 
   const changeLanguage = useSetLocale();
   const locale = useGetLocale();
@@ -140,26 +135,6 @@ export const Header: React.FC<RefineThemedLayoutHeaderProps> = () => {
                 </MenuItem>
               ))}
             </Select>
-
-            <IconButton
-              onClick={() => {
-                setMode();
-              }}
-              sx={{
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "dark" ? "transparent" : "#00000014",
-              }}
-            >
-              {mode === "dark" ? (
-                <BrightnessHighIcon />
-              ) : (
-                <Brightness4Icon
-                  sx={{
-                    fill: "#000000DE",
-                  }}
-                />
-              )}
-            </IconButton>
 
             <Stack
               direction="row"

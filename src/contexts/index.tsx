@@ -17,7 +17,7 @@ type ColorModeContextType = {
 };
 
 export const ColorModeContext = createContext<ColorModeContextType>(
-  {} as ColorModeContextType,
+  {} as ColorModeContextType
 );
 
 export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
@@ -25,12 +25,12 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
 }) => {
   const colorModeFromLocalStorage = localStorage.getItem("colorMode");
   const isSystemPreferenceDark = window?.matchMedia(
-    "(prefers-color-scheme: dark)",
+    "(prefers-color-scheme: dark)"
   ).matches;
 
   const systemPreference = isSystemPreferenceDark ? "dark" : "light";
   const [mode, setMode] = useState(
-    colorModeFromLocalStorage || systemPreference,
+    colorModeFromLocalStorage || systemPreference
   );
 
   useEffect(() => {
@@ -52,9 +52,7 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
         mode,
       }}
     >
-      <ThemeProvider theme={mode === "light" ? LightTheme : DarkTheme}>
-        {children}
-      </ThemeProvider>
+      <ThemeProvider theme={LightTheme}>{children}</ThemeProvider>
     </ColorModeContext.Provider>
   );
 };

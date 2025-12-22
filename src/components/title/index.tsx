@@ -9,6 +9,16 @@ export const Title: React.FC = () => {
       sx={{
         color: "text.primary",
       }}
-    ></Box>
+    >
+      <Box
+        component="img"
+        src={"/images/logo.png"}
+        alt={"Atlas logo"}
+        sx={{
+          height: 40,
+          width: "auto",
+        }}
+      />
+    </Box>
   );
 };
