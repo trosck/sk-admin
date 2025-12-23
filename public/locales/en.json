@@ -1,6 +1,24 @@
 {
   "uploadPromocodes": "Upload promocodes",
   "uploadImages": "Upload images",
+  "promo-cats": {
+    "promo-cats": "Promo-cats",
+    "titles": {
+      "list": "Promo-cats"
+    }
+  },
+  "scheduled-posts": {
+    "scheduled-posts": "Scheduled posts",
+    "titles": {
+      "list": "Scheduled posts"
+    }
+  },
+  "wheel-of-fortune": {
+    "wheel-of-fortune": "Wheel of Fortune",
+    "titles": {
+      "list": "Wheel of Fortune"
+    }
+  },
   "promocat": {
     "postTime": "Posting time",
     "promocode": "Promocode",

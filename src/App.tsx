@@ -43,9 +43,7 @@ const ScheduledPostShow = lazy(() => import("./pages/scheduled-posts/show"));
 const ScheduledPostCreate = lazy(
   () => import("./pages/scheduled-posts/create")
 );
-const ScheduledPostEdit = lazy(
-  () => import("./pages/scheduled-posts/edit")
-);
+const ScheduledPostEdit = lazy(() => import("./pages/scheduled-posts/edit"));
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -113,7 +111,6 @@ const App: React.FC = () => {
                   name: "wheel-of-fortune",
                   list: "wheel-of-fortune",
                   meta: {
-                    label: "Wheel of Fortune",
                     icon: <AttractionsIcon />,
                   },
                 },

@@ -1,6 +1,24 @@
 {
-  "uploadPromocodes": "Upload promocodes",
-  "uploadImages": "Upload images",
+  "uploadPromocodes": "Загрузить промокоды",
+  "uploadImages": "Загрузить изображения",
+  "promo-cats": {
+    "promo-cats": "Промо-коты",
+    "titles": {
+      "list": "Промо-коты"
+    }
+  },
+  "scheduled-posts": {
+    "scheduled-posts": "Отложенные посты",
+    "titles": {
+      "list": "Промо-коты"
+    }
+  },
+  "wheel-of-fortune": {
+    "wheel-of-fortune": "Колесо фортуны",
+    "titles": {
+      "list": "Промо-коты"
+    }
+  },
   "promocat": {
     "postTime": "Время публикации",
     "promocode": "Promocode",
