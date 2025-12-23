@@ -10,13 +10,13 @@
   "scheduled-posts": {
     "scheduled-posts": "Отложенные посты",
     "titles": {
-      "list": "Промо-коты"
+      "list": "Отложенные посты"
     }
   },
   "wheel-of-fortune": {
     "wheel-of-fortune": "Колесо фортуны",
     "titles": {
-      "list": "Промо-коты"
+      "list": "Колесо фортуны"
     }
   },
   "promocat": {
