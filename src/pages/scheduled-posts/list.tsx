@@ -70,8 +70,8 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 wordBreak: "break-word",
-                margin: 0,
-                padding: 0,
+                // margin: "10px 5px",
+                padding: "10px 0",
                 lineHeight: "normal",
                 "& p": {
                   margin: 0,
@@ -132,29 +132,26 @@ export const ScheduledPostList = ({ children }: PropsWithChildren) => {
               >
                 <VisibilityOutlined />
               </IconButton>
-              {
-                row.status !== "SENT" && (
-                  <IconButton
-                    sx={{
-                      color: "text.secondary",
-                    }}
-                    onClick={() => {
-                      return go({
-                        to: `${editUrl("scheduled-posts", row.id)}`,
-                        query: {
-                          to: pathname,
-                        },
-                        options: {
-                          keepQuery: true,
-                        },
-                        type: "replace",
-                      });
-                    }}
-                  >
-                    <EditOutlined />
-                  </IconButton>
-                )
-              }
+              <IconButton
+                sx={{
+                  color: "text.secondary",
+                }}
+                disabled={row.status !== "SCHEDULED"}
+                onClick={() => {
+                  return go({
+                    to: `${editUrl("scheduled-posts", row.id)}`,
+                    query: {
+                      to: pathname,
+                    },
+                    options: {
+                      keepQuery: true,
+                    },
+                    type: "replace",
+                  });
+                }}
+              >
+                <EditOutlined />
+              </IconButton>
               <IconButton
                 sx={{
                   color: "error.main",
