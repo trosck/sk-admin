@@ -228,6 +228,11 @@
     "addresses": {
       "addresses": "Addresses",
       "address": "Address"
+    },
+    "search": {
+      "placeholder": "Search users...",
+      "minLength": "Enter at least 2 characters",
+      "noResults": "No users found"
     }
   },
   "errors": {

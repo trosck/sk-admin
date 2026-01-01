@@ -45,6 +45,11 @@ export const dataProvider: DataProvider = {
       paramsObj.order = s.order ?? "asc";
     }
 
+    const search = filters?.[0]?.value;
+    if (search) {
+      paramsObj.search = search;
+    }
+
     const response = await httpClient.get(`/${resource}`, {
       params: paramsObj,
       headers: meta?.headers,

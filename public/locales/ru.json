@@ -228,6 +228,11 @@
     "addresses": {
       "addresses": "Адреса",
       "address": "Адрес"
+    },
+    "search": {
+      "placeholder": "Поиск пользователей...",
+      "minLength": "Введите минимум 2 символа",
+      "noResults": "Пользователи не найдены"
     }
   },
   "errors": {
