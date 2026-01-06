@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "refine build",
+    "build:clean": "rm -rf dist && refine build",
+    "deploy": "npm run build:clean && ./deploy.sh",
     "dev": "refine dev",
     "refine": "refine",
     "start": "refine start"
