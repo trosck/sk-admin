@@ -1,4 +1,7 @@
 {
+  "rank": {
+    "title": "Рейтинг участников"
+  },
   "uploadPromocodes": "Загрузить промокоды",
   "uploadImages": "Загрузить изображения",
   "promo-cats": {
