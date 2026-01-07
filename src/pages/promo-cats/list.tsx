@@ -334,7 +334,7 @@ export const PromoCatList = ({ children }: PropsWithChildren) => {
             <input
               type="file"
               ref={fileInputRef}
-              accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.numbers,application/x-iwork-numbers-sffnumbers"
               style={{ display: "none" }}
               onChange={handlePromocodesFileChange}
             />
