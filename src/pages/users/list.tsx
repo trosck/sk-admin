@@ -33,6 +33,14 @@ export const UserList = ({ children }: PropsWithChildren) => {
       pagination: {
         pageSize: 10,
       },
+      sorters: {
+        initial: [
+          {
+            field: "total_xp",
+            order: "desc",
+          },
+        ],
+      },
     }
   );
 
